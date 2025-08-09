@@ -39,8 +39,8 @@ COPY .env ./
 # Instala apenas as dependências essenciais para execução
 RUN npm install --omit=dev
 
-# Expõe a porta 3010 do container (ajuste conforme o `process.env.PORT` do app)
-EXPOSE 3010
+# Expõe a porta 3011 do container (ajuste conforme o `process.env.PORT` do app)
+EXPOSE 3011
 
 # Define o comando que será executado ao iniciar o container
 CMD ["node", "dist/index.js"]
