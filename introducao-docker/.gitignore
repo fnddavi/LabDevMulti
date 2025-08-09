@@ -1,0 +1,6 @@
+/exemplo-um/node_modules
+/exemplo-um/*.txt
+/exemplo-um/src/index-exer3.ts
+/exemplo-dois/node_modules
+/exemplo-dois/Dockerfile
+/exemplo-dois/.dockerignore
