@@ -1,7 +1,7 @@
 #### Etapa 1: Construção da aplicação
 
 # Usa uma imagem base leve com Node.js v20 (Alpine é uma distribuição enxuta)
-FROM node:20-alpine AS builder
+FROM node:20 AS builder
 
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
