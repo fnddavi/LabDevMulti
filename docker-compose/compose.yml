@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
+      POSTGRES_PASSWORD: 2202
       POSTGRES_DB: docker-aula
     ports:
       # Mapeia a porta externa 5433 (host) para a 5432 (container)
@@ -26,7 +26,7 @@ services:
       PORT: 3000
       DB_HOST: db # o nome do serviço "db" funciona como hostname
       DB_USER: postgres
-      DB_PASSWORD: 123
+      DB_PASSWORD: 2202
       DB_NAME: docker-aula
       DB_PORT: 5432 # Dentro do container, a porta do Postgres é 5432
       NODE_ENV: production
