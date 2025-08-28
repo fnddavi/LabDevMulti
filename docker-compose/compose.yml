@@ -51,11 +51,12 @@ services:
     build: ./front-dois
     container_name: dois-container
     ports:
-      - "3003:80"
+      - "3003:80"   # Porta do host 3003 -> Porta do container 80 (Nginx)
     networks:
       - minha-rede
     depends_on:
       - server
+
 
 volumes:
   meu-volume:
