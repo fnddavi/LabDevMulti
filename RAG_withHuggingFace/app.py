@@ -5,7 +5,7 @@ import faiss
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
-from dotenv import load_dotenv  # <-- ADICIONE ESTA LINHA
+from dotenv import load_dotenv  # <-- Adicionado para carregar variáveis de ambiente
 
 load_dotenv()
 
