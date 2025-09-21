@@ -15,79 +15,49 @@ API_URL = "http://localhost:8000"
 st.title("🤖 Interface Chat com LLM Local")
 st.markdown("---")
 
-# Sidebar
-with st.sidebar:
-    st.header("⚙️ Configurações")
-    api_url = st.text_input("URL da API", value=API_URL)
-    st.markdown("---")
-    
-    # Status da API
-    st.subheader("📊 Status da API")
-    try:
-        response = requests.get(f"{api_url}/", timeout=5)
-        if response.status_code == 200:
-            st.success("✅ API conectada")
-            
-            # Mostrar estatísticas do contexto
-            try:
-                stats_response = requests.get(f"{api_url}/context/stats", timeout=5)
-                if stats_response.status_code == 200:
-                    stats = stats_response.json()
-                    st.info(f"📚 {stats['total_chunks']} chunks carregados")
-                else:
-                    st.warning("⚠️ Erro ao obter estatísticas")
-            except:
-                st.warning("⚠️ Erro ao conectar com /context/stats")
-                
-        else:
-            st.error("❌ API não responde")
-    except:
-        st.error("❌ Erro de conexão")
-    
-    st.markdown("---")
-    
-    # Botão para limpar contexto
-    if st.button("🗑️ Limpar Base de Conhecimento", type="secondary"):
-        try:
-            response = requests.delete(f"{api_url}/context/clear", timeout=10)
-            if response.status_code == 200:
-                st.success("✅ Base de conhecimento limpa!")
-                st.rerun()
-            else:
-                st.error("❌ Erro ao limpar base")
-        except:
-            st.error("❌ Erro de conexão")
-
 # Inicializa o session state
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 if 'contexts_manual' not in st.session_state:
     st.session_state.contexts_manual = []
 
-# Layout principal
-col1, col2 = st.columns([1, 2])
-
-with col1:
+# Sidebar
+with st.sidebar:
+    st.header("⚙️ Configurações")
+    
+    st.subheader("📊 Status da API")
+    try:
+        response = requests.get(f"{API_URL}/", timeout=5)
+        if response.status_code == 200:
+            st.success(f"✅ API conectada: {API_URL}")
+        else:
+            st.error(f"❌ API respondeu com erro: {response.status_code}")
+    except requests.exceptions.RequestException:
+        st.error("❌ Erro de conexão com a API")
+    
+    st.markdown("---")
+    
+    # Seção de gerenciamento de contexto movida para sidebar
     st.header("📚 Gerenciar Contexto")
 
     # Uploader de arquivo CSV
-    st.subheader("Carregar Arquivo de Contexto (.csv)")
+    st.subheader("Carregar Arquivo (.csv)")
     uploaded_file = st.file_uploader(
-        "Selecione um arquivo CSV com uma coluna chamada 'context'", 
+        "Arquivo CSV com coluna 'context'", 
         type=['csv']
     )
     if uploaded_file is not None:
-        with st.spinner("Processando arquivo..."):
+        with st.spinner("Processando..."):
             try:
                 files = {'file': (uploaded_file.name, uploaded_file, 'text/csv')}
-                response = requests.post(f"{api_url}/ingest-csv/", files=files)
+                response = requests.post(f"{API_URL}/ingest-csv/", files=files)
 
                 if response.status_code == 200:
                     result = response.json()
                     if "error" in result:
-                        st.error(f"❌ Erro no arquivo: {result['error']}")
+                        st.error(f"❌ Erro: {result['error']}")
                     else:
-                        st.success(f"✅ Arquivo processado! {result.get('documents_added', 0)} contextos adicionados.")
+                        st.success(f"✅ {result.get('documents_added', 0)} contextos adicionados!")
                 else:
                     st.error(f"❌ Erro da API: {response.text}")
 
@@ -95,14 +65,14 @@ with col1:
                 st.error(f"❌ Erro de conexão: {e}")
     
     # Formulário para adicionar contexto manual
+    st.subheader("Adicionar Contexto Manual")
     with st.form("add_context", clear_on_submit=True):
-        st.subheader("Adicionar Contexto Manualmente")
-        context_text = st.text_area("Digite um trecho de texto:", height=100)
-        submit_context = st.form_submit_button("📝 Adicionar Texto")
+        context_text = st.text_area("Digite o texto:", height=80)
+        submit_context = st.form_submit_button("📝 Adicionar")
         
         if submit_context and context_text:
             try:
-                response = requests.post(f"{api_url}/ingest", json={"text": context_text})
+                response = requests.post(f"{API_URL}/ingest", json={"text": context_text})
                 if response.status_code == 200:
                     st.session_state.contexts_manual.append(context_text)
                     st.success("✅ Contexto adicionado!")
@@ -111,54 +81,45 @@ with col1:
             except requests.exceptions.RequestException as e:
                 st.error(f"❌ Erro de conexão: {e}")
 
+    # Mostrar contextos manuais adicionados
     if st.session_state.contexts_manual:
-        st.subheader("📋 Contextos Manuais Adicionados")
+        st.subheader("📋 Contextos Adicionados")
         for i, context in enumerate(st.session_state.contexts_manual):
-            with st.expander(f"Contexto {i+1}"):
-                st.write(context)
+            with st.expander(f"Contexto {i+1}", expanded=False):
+                st.write(context[:100] + "..." if len(context) > 100 else context)
     
-    if st.button("🗑️ Limpar Histórico Local"):
+    st.markdown("---")
+    
+    # Botões de limpeza
+    if st.button("🗑️ Limpar Histórico", type="secondary"):
         st.session_state.contexts_manual = []
         st.session_state.messages = []
         st.rerun()
 
-with col2:
-    st.header("💬 Chat com o Modelo")
-    
-    # Exibe o histórico
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+# Layout principal - apenas o chat
+st.header("💬 Chat com o Modelo")
 
-    # Input do usuário
-    if prompt := st.chat_input("Digite sua pergunta aqui..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        
-        with st.chat_message("assistant"):
-            with st.spinner("🤔 Pensando..."):
-                try:
-                    response = requests.post(f"{api_url}/ask", json={"question": prompt})
-                    if response.status_code == 200:
-                        result = response.json()
-                        answer = result.get("answer", "Sem resposta.")
-                        context_used = result.get("context", "Sem contexto")
-                        confidence = result.get("confidence", 0.0)
-                        context_metadata = result.get("context_metadata", {})
-                        alternative_contexts = result.get("alternative_contexts", [])
-                        
-                        # Exibir apenas a resposta
-                        st.markdown(answer)
-                        
-                        # Adicionar ao histórico (versão simplificada)
-                        st.session_state.messages.append({
-                            "role": "assistant", 
-                            "content": answer
-                        })
-                        st.markdown(answer)
-                        st.session_state.messages.append({"role": "assistant", "content": answer})
-                    else:
-                        st.error(f"Erro da API: {response.text}")
-                except requests.exceptions.RequestException as e:
-                    st.error(f"Erro de conexão: {e}")
+# Exibe o histórico
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Input do usuário
+if prompt := st.chat_input("Digite sua pergunta aqui..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    
+    with st.chat_message("assistant"):
+        with st.spinner("🤔 Pensando..."):
+            try:
+                response = requests.post(f"{API_URL}/ask", json={"question": prompt})
+                if response.status_code == 200:
+                    result = response.json()
+                    answer = result.get("answer", "Sem resposta.")
+                    st.markdown(answer)
+                    st.session_state.messages.append({"role": "assistant", "content": answer})
+                else:
+                    st.error(f"Erro da API: {response.text}")
+            except requests.exceptions.RequestException as e:
+                st.error(f"Erro de conexão: {e}")
