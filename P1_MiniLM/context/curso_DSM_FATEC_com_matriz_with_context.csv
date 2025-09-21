@@ -1,0 +1,48 @@
+context,Categoria,Informações,Semestre,Disciplina,Carga Horária
+"O que é o curso: Curso superior de tecnologia em Desenvolvimento de Software Multiplataforma (DSM), voltado para formar profissionais que desenvolvem software para web, desktop, mobile, nuvem e IoT, incluindo metodologias ágeis, versionamento, segurança, UX/UI, IA.",O que é o curso,"Curso superior de tecnologia em Desenvolvimento de Software Multiplataforma (DSM), voltado para formar profissionais que desenvolvem software para web, desktop, mobile, nuvem e IoT, incluindo metodologias ágeis, versionamento, segurança, UX/UI, IA.",,,
+"Estrutura e duração: Duração típica de 3 anos (6 semestres). Muitas aulas práticas em laboratório, algumas disciplinas online ou híbridas em semestres avançados.",Estrutura e duração,"Duração típica de 3 anos (6 semestres). Muitas aulas práticas em laboratório, algumas disciplinas online ou híbridas em semestres avançados.",,,
+"Período, horários, vagas: Período varia (matutino ou noturno). Vagas em torno de 35‑40 por semestre. Horários dependem da unidade.","Período, horários, vagas",Período varia (matutino ou noturno). Vagas em torno de 35‑40 por semestre. Horários dependem da unidade.,,,
+"Objetivos / Perfil: Formar profissionais para especificar, modelar, programar, testar e implantar software. Utiliza IA, nuvem, segurança, UX. Projetos práticos. Pode atuar como desenvolvedor, líder ou empreendedor.",Objetivos / Perfil,"Formar profissionais para especificar, modelar, programar, testar e implantar software. Utiliza IA, nuvem, segurança, UX. Projetos práticos. Pode atuar como desenvolvedor, líder ou empreendedor.",,,
+Estágio e certificações: Estágio supervisionado obrigatório em várias unidades (≈240‑h em PG). Algumas oferecem certificações intermediárias e microcertificações.,Estágio e certificações,Estágio supervisionado obrigatório em várias unidades (≈240‑h em PG). Algumas oferecem certificações intermediárias e microcertificações.,,,
+"Desafios: Curso relativamente novo, demanda dedicação prática, especialmente para quem não tem experiência prévia em programação.",Desafios,"Curso relativamente novo, demanda dedicação prática, especialmente para quem não tem experiência prévia em programação.",,,
+Semestre 1 - Algorítmico e Lógica de Programação (80h),,,1.0,Algorítmico e Lógica de Programação,80h
+Semestre 1 - Modelagem de Banco de Dados (80h),,,1.0,Modelagem de Banco de Dados,80h
+Semestre 1 - Engenharia de Software I (80h),,,1.0,Engenharia de Software I,80h
+Semestre 1 - Sistemas Operacionais e Redes de Computadores (80h),,,1.0,Sistemas Operacionais e Redes de Computadores,80h
+Semestre 1 - Desenvolvimento de Web I (80h),,,1.0,Desenvolvimento de Web I,80h
+Semestre 1 - Design Digital (80h),,,1.0,Design Digital,80h
+Semestre 2 - Banco de Dados Relacional (80h),,,2.0,Banco de Dados Relacional,80h
+Semestre 2 - Estrutura de Dados (80h),,,2.0,Estrutura de Dados,80h
+Semestre 2 - Engenharia de Software II (80h),,,2.0,Engenharia de Software II,80h
+Semestre 2 - Técnicas de Programação I (80h),,,2.0,Técnicas de Programação I,80h
+Semestre 2 - Desenvolvimento Web II (80h),,,2.0,Desenvolvimento Web II,80h
+Semestre 2 - Matemática para Computação (80h),,,2.0,Matemática para Computação,80h
+Semestre 3 - Gestão Ágil de Projetos de Software (80h),,,3.0,Gestão Ágil de Projetos de Software,80h
+Semestre 3 - Banco de Dados Não Relacional (80h),,,3.0,Banco de Dados Não Relacional,80h
+Semestre 3 - Interação Humano Computador (40h),,,3.0,Interação Humano Computador,40h
+Semestre 3 - Técnicas de Programação II (80h),,,3.0,Técnicas de Programação II,80h
+Semestre 3 - Desenvolvimento Web III (80h),,,3.0,Desenvolvimento Web III,80h
+Semestre 3 - Álgebra Linear (80h),,,3.0,Álgebra Linear,80h
+Semestre 3 - Inglês I (40h),,,3.0,Inglês I,40h
+Semestre 4 - Internet das Coisas e Aplicações (80h),,,4.0,Internet das Coisas e Aplicações,80h
+Semestre 4 - Experiência do Usuário (40h),,,4.0,Experiência do Usuário,40h
+Semestre 4 - Programação de Dispositivos Móveis I (80h),,,4.0,Programação de Dispositivos Móveis I,80h
+Semestre 4 - Integração e Entrega Contínua (80h),,,4.0,Integração e Entrega Contínua,80h
+Semestre 4 - Laboratório de Desenvolvimento Web (80h),,,4.0,Laboratório de Desenvolvimento Web,80h
+Semestre 4 - Estatística Aplicada (80h),,,4.0,Estatística Aplicada,80h
+Semestre 4 - Inglês II (40h),,,4.0,Inglês II,40h
+Semestre 5 - Programação de Dispositivos Móveis II (80h),,,5.0,Programação de Dispositivos Móveis II,80h
+Semestre 5 - Segurança no Desenvolvimento de Aplicações (80h),,,5.0,Segurança no Desenvolvimento de Aplicações,80h
+Semestre 5 - Computação em Nuvem I (80h),,,5.0,Computação em Nuvem I,80h
+Semestre 5 - Laboratório de Programação de Dispositivos Móveis (80h),,,5.0,Laboratório de Programação de Dispositivos Móveis,80h
+Semestre 5 - Aprendizagem de Máquina (80h),,,5.0,Aprendizagem de Máquina,80h
+Semestre 5 - Fundamentos da Redação Técnica (40h),,,5.0,Fundamentos da Redação Técnica,40h
+Semestre 5 - Inglês III (40h),,,5.0,Inglês III,40h
+Semestre 6 - Ética Profissional e Patente (40h),,,6.0,Ética Profissional e Patente,40h
+Semestre 6 - Estágio Supervisionado em Desenvolvimento de Software Multiplataforma (240h),,,6.0,Estágio Supervisionado em Desenvolvimento de Software Multiplataforma,240h
+Semestre 6 - Qualidade e Testes de Software (80h),,,6.0,Qualidade e Testes de Software,80h
+Semestre 6 - Computação em Nuvem II (80h),,,6.0,Computação em Nuvem II,80h
+Semestre 6 - Processamento de Linguagem Natural (80h),,,6.0,Processamento de Linguagem Natural,80h
+Semestre 6 - Laboratório de Desenvolvimento Multiplataforma (80h),,,6.0,Laboratório de Desenvolvimento Multiplataforma,80h
+Semestre 6 - Mineração de Dados (80h),,,6.0,Mineração de Dados,80h
+Semestre 6 - Inglês IV (40h),,,6.0,Inglês IV,40h
