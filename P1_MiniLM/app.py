@@ -79,16 +79,37 @@ def ask(item: Ask):
     if not documents:
         return {"answer": "A base de conhecimento está vazia. Por favor, insira um contexto primeiro.", "context": "Sem contexto disponível."}
 
+    # --- MELHORIA 1: Buscar mais documentos de contexto (k=3) ---
+    K_NEIGHBORS = 3
+    if index.ntotal < K_NEIGHBORS:
+        # Se houver menos documentos do que o K desejado, busca todos
+        K_NEIGHBORS = index.ntotal
+
     q_vec = embedder.encode(
         [item.question], convert_to_numpy=True, normalize_embeddings=True
     )
-    D, I = index.search(q_vec, 1)
-    context = documents[I[0][0]]
+    D, I = index.search(q_vec, K_NEIGHBORS)
+    
+    # Juntar os contextos encontrados
+    retrieved_contexts = [documents[i] for i in I[0]]
+    context = "\n---\n".join(retrieved_contexts)
 
-    # Prompt em português para guiar o modelo
-    prompt = f"Responda a seguinte pergunta com base no contexto fornecido.\n\nContexto: {context}\n\nPergunta: {item.question}"
+    # --- MELHORIA 2: Prompt mais claro e direto ---
+    # Instruímos o modelo de forma explícita e terminamos com "Resposta:"
+    # para guiar a geração.
+    prompt = f"""Com base no contexto fornecido, responda a pergunta de forma clara e concisa.
 
-    generated = generator(prompt, max_length=100, num_return_sequences=1)
+Contexto:
+{context}
+
+Pergunta:
+{item.question}
+
+Resposta:
+"""
+
+    # --- MELHORIA 3: Adicionar 'temperature' para respostas mais focadas ---
+    generated = generator(prompt, max_length=150, num_return_sequences=1, temperature=0.1)
     answer = generated[0]['generated_text']
 
     return {"answer": answer, "context": context}
