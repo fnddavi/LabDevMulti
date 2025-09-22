@@ -9,3 +9,4 @@ torch
 pandas
 python-multipart
 streamlit
+nltk
