@@ -2,7 +2,7 @@
 setlocal
 
 :: Script para executar a aplicação LLM com interface web no Windows
-:: Autor: Fernando Davi (Adaptado para Windows por Gemini)
+:: Autor: Fernando Davi
 :: Data: 21/09/2025
 
 echo.
@@ -10,40 +10,30 @@ echo 🚀 Iniciando aplicacao LLM com interface web...
 echo ================================================
 echo.
 
-:: Função para verificar se o comando existe
-where python >nul 2>nul
-if %errorlevel% neq 0 (
-    echo ❌ Python nao encontrado. Por favor, instale o Python e adicione ao PATH.
-    exit /b 1
-)
-
 :: Verificar se o ambiente virtual existe
 if not exist "venv" (
-    echo 📦 Criando ambiente virtual...
-    python -m venv venv
-    if %errorlevel% neq 0 (
-        echo ❌ Erro ao criar ambiente virtual.
-        exit /b 1
-    )
+    echo ❌ Ambiente virtual nao encontrado.
+    echo 💡 Execute primeiro: setup_Windows.bat
+    exit /b 1
 )
 
 :: Ativar ambiente virtual
 echo 🔧 Ativando ambiente virtual...
 call "venv\Scripts\activate.bat"
 
-:: Instalar/Atualizar dependências
-echo 📚 Instalando dependencias do requirements.txt...
-pip install -r requirements.txt
+:: Verificar se as dependências estão instaladas
+python -c "import fastapi, streamlit, sentence_transformers, transformers, faiss" >nul 2>nul
 if %errorlevel% neq 0 (
-    echo ❌ Erro ao instalar dependencias.
+    echo ❌ Dependencias nao instaladas.
+    echo 💡 Execute primeiro: setup_Windows.bat
     call "venv\Scripts\deactivate.bat"
     exit /b 1
 )
 
-echo ✅ Dependencias instaladas com sucesso!
+echo ✅ Ambiente configurado!
 echo.
 
-:: --- Nome do arquivo da interface ---
+:: Nome do arquivo da interface
 set "INTERFACE_FILE=interface.py"
 
 :: Verificar qual opção o usuário quer
@@ -82,9 +72,31 @@ echo.
 echo 📡 Iniciando API FastAPI em background...
 start "FastAPI_API" /B uvicorn app:app --host 0.0.0.0 --port 8000
 
-echo ⏳ Aguardando a API inicializar...
-timeout /t 5 >nul
+echo ⏳ Aguardando API carregar contextos e ficar pronta...
+set /a max_attempts=30
+set /a attempt=0
 
+:wait_loop
+set /a attempt+=1
+echo    Tentativa %attempt%/%max_attempts%...
+
+:: Verificar se a API responde
+curl -s http://localhost:8000/ >nul 2>nul
+if %errorlevel% equ 0 (
+    echo ✅ API esta pronta!
+    goto api_ready
+)
+
+if %attempt% geq %max_attempts% (
+    echo ❌ Timeout: API nao ficou pronta em 60 segundos
+    taskkill /F /IM uvicorn.exe >nul 2>nul
+    exit /b 1
+)
+
+timeout /t 2 >nul
+goto wait_loop
+
+:api_ready
 echo 🌐 Iniciando interface Streamlit...
 start "Streamlit_Web" /B streamlit run "%INTERFACE_FILE%" --server.port 8501
 

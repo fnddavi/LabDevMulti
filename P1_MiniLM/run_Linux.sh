@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script para executar a aplicação LLM com interface web
-# Autor: Fernando Davi (Revisado por Gemini)
+# Autor: Fernando Davi
 # Data: 21/09/2025
 
 echo "🚀 Iniciando aplicação LLM com interface web..."
@@ -13,44 +13,30 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Função para verificar se o comando existe
-command_exists() {
-    command -v "$1" >/dev/null 2>&1
-}
-
-# Verificar se Python está instalado
-if ! command_exists python3; then
-    echo -e "${RED}❌ Python3 não encontrado. Por favor, instale o Python3.${NC}"
-    exit 1
-fi
-
 # Verificar se o ambiente virtual existe
 if [ ! -d "venv" ]; then
-    echo -e "${YELLOW}📦 Criando ambiente virtual...${NC}"
-    python3 -m venv venv
-    if [ $? -ne 0 ]; then
-        echo -e "${RED}❌ Erro ao criar ambiente virtual.${NC}"
-        exit 1
-    fi
+    echo -e "${RED}❌ Ambiente virtual não encontrado.${NC}"
+    echo -e "${YELLOW}💡 Execute primeiro: ./setup_Linux.sh${NC}"
+    exit 1
 fi
 
 # Ativar ambiente virtual
 echo -e "${YELLOW}🔧 Ativando ambiente virtual...${NC}"
 source venv/bin/activate
 
-# Instalar/Atualizar dependências
-echo -e "${YELLOW}📚 Instalando dependências do requirements.txt...${NC}"
-pip install -r requirements.txt
+# Verificar se as dependências estão instaladas
+python -c "import fastapi, streamlit, sentence_transformers, transformers, faiss" 2>/dev/null
 if [ $? -ne 0 ]; then
-    echo -e "${RED}❌ Erro ao instalar dependências.${NC}"
+    echo -e "${RED}❌ Dependências não instaladas.${NC}"
+    echo -e "${YELLOW}💡 Execute primeiro: ./setup_Linux.sh${NC}"
     deactivate
     exit 1
 fi
 
-echo -e "${GREEN}✅ Dependências instaladas com sucesso!${NC}"
+echo -e "${GREEN}✅ Ambiente configurado!${NC}"
 echo ""
 
-# --- CORREÇÃO: Nome do arquivo da interface ---
+# Nome do arquivo da interface
 INTERFACE_FILE="interface.py"
 
 # Verificar qual opção o usuário quer
@@ -61,7 +47,7 @@ elif [ "$1" == "web" ]; then
     echo -e "${GREEN}🌐 Iniciando apenas a interface web...${NC}"
     echo -e "${YELLOW}⚠️  Certifique-se de que a API está rodando em http://localhost:8000${NC}"
     streamlit run "$INTERFACE_FILE" --server.port 8501
-elif [ "$1" == "both" ] || [ -z "$1" ]; then # -z "$1" para tratar argumento vazio como padrão
+elif [ "$1" == "both" ] || [ -z "$1" ]; then
     echo -e "${GREEN}🚀 Iniciando API e Interface Web em paralelo...${NC}"
     echo ""
     
@@ -70,8 +56,37 @@ elif [ "$1" == "both" ] || [ -z "$1" ]; then # -z "$1" para tratar argumento vaz
     uvicorn app:app --host 0.0.0.0 --port 8000 &
     API_PID=$!
     
-    # Aguardar um pouco para a API inicializar
-    sleep 5
+    # Aguardar a API estar completamente pronta
+    echo -e "${YELLOW}⏳ Aguardando API carregar contextos e ficar pronta...${NC}"
+    max_attempts=30
+    attempt=0
+    
+    while [ $attempt -lt $max_attempts ]; do
+        # Verificar se a API responde com sucesso
+        if command_exists curl; then
+            # Usar curl se disponível
+            if curl -s http://localhost:8000/ > /dev/null 2>&1; then
+                echo -e "${GREEN}✅ API está pronta!${NC}"
+                break
+            fi
+        else
+            # Alternativa usando python se curl não estiver disponível
+            if python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" > /dev/null 2>&1; then
+                echo -e "${GREEN}✅ API está pronta!${NC}"
+                break
+            fi
+        fi
+        
+        attempt=$((attempt + 1))
+        echo -e "${YELLOW}   Tentativa $attempt/$max_attempts...${NC}"
+        sleep 2
+    done
+    
+    if [ $attempt -eq $max_attempts ]; then
+        echo -e "${RED}❌ Timeout: API não ficou pronta em 60 segundos${NC}"
+        kill $API_PID 2>/dev/null
+        exit 1
+    fi
     
     # Iniciar interface web
     echo -e "${YELLOW}🌐 Iniciando interface Streamlit...${NC}"
@@ -88,7 +103,7 @@ elif [ "$1" == "both" ] || [ -z "$1" ]; then # -z "$1" para tratar argumento vaz
     # Função para limpar os processos ao sair
     cleanup() {
         echo ""
-        echo -e "${YELLOW}Gracefully shutting down...${NC}"
+        echo -e "${YELLOW}Parando aplicação...${NC}"
         kill $API_PID $WEB_PID 2>/dev/null
         echo "Aplicação parada."
     }
